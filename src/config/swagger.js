@@ -11,7 +11,7 @@ const options = {
     },
     servers: [{ url: `http://localhost:${env.PORT}/api` }],
   },
-  apis: ["./src/modules/**/*.routes.js"],
+  apis: ["./src/modules/**/*.routes.js", "./src/routes/*.js"],
 }
 
 export const swaggerSpec = swaggerJsdoc(options)
