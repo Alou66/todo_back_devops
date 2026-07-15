@@ -15,17 +15,18 @@ export const taskRepository = {
     return prisma.task.count({ where: { status } })
   },
 
-  create({ labelIds, ...data }) {
+  create({ labelIds, dueDate, ...data }) {
     return prisma.task.create({
       data: {
         ...data,
+        dueDate: dueDate ? new Date(dueDate) : null,
         labels: { create: labelIds.map((labelId) => ({ labelId })) },
       },
       include: taskInclude,
     })
   },
 
-  update(id, { labelIds, ...data }) {
+  update(id, { labelIds, dueDate, ...data }) {
     return prisma.$transaction(async (tx) => {
       if (labelIds !== undefined) {
         await tx.taskLabel.deleteMany({ where: { taskId: id } })
@@ -34,6 +35,7 @@ export const taskRepository = {
         where: { id },
         data: {
           ...data,
+          ...(dueDate !== undefined ? { dueDate: dueDate ? new Date(dueDate) : null } : {}),
           ...(labelIds !== undefined ? { labels: { create: labelIds.map((labelId) => ({ labelId })) } } : {}),
         },
         include: taskInclude,
